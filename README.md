@@ -1,27 +1,60 @@
-How to build PlatformIO based project
+Мигание светодиодами на STM32F4 с FreeRTOS
 =====================================
 
-1. [Install PlatformIO Core](https://docs.platformio.org/page/core.html)
-2. Download [development platform with examples](https://github.com/platformio/platform-ststm32/archive/develop.zip)
-3. Extract ZIP archive
-4. Run these commands:
+Этот проект демонстрирует работу двух светодиодов на плате STM32F4 с использованием операционной системы реального времени FreeRTOS.
 
-```shell
-# Change directory to example
-$ cd platform-ststm32/examples/stm32cube-ll-blink
+Основные характеристики
+Микроконтроллер: STM32F4xx
 
-# Build project
-$ pio run
+Операционная система: FreeRTOS
 
-# Upload firmware
-$ pio run --target upload
+Язык программирования: C
 
-# Build specific environment
-$ pio run -e nucleo_f401re
+Инструментарий: Стандартная библиотека STM32 (LL)
 
-# Upload firmware for the specific environment
-$ pio run -e nucleo_f401re --target upload
+Функциональность
+Проект реализует две независимые задачи:
 
-# Clean build files
-$ pio run --target clean
-```
+Мигание встроенным светодиодом (PC13) с периодом 1 секунда (1 мс включен, 999 мс выключен)
+
+Мигание внешним светодиодом (PA5) с периодом 1 секунда (500 мс включен, 500 мс выключен)
+
+Конфигурация системы
+Тактирование
+Используется внешний кварцевый генератор (HSE)
+
+Настроен PLL для получения частоты ядра 100 МГц
+
+Настройка делителей для шин APB1 и APB2
+
+Периферия
+Инициализированы два GPIO-пина:
+
+PC13 (встроенный светодиод, активный уровень - низкий)
+
+PA5 (внешний светодиод, активный уровень - высокий)
+
+Структура проекта
+SystemClock_Config() - настройка системного тактирования
+
+LED_Init() - инициализация GPIO для управления светодиодами
+
+LedBlinkTaskPC13() - задача для мигания светодиодом на PC13
+
+LedBlinkTaskPA5() - задача для мигания светодиодом на PA5
+
+main() - создание задач и запуск планировщика FreeRTOS
+
+Настройка задач FreeRTOS
+Обе задачи создаются с одинаковым приоритетом (2)
+
+Используется минимальный размер стека (configMINIMAL_STACK_SIZE)
+
+Задачи не передают параметры и не используют механизмы синхронизации
+
+Особенности
+Встроенный светодиод (PC13) имеет инвертированную логику (активный уровень - низкий)
+
+Внешний светодиод (PA5) использует стандартную логику (активный уровень - высокий)
+
+Для задержек используются функции FreeRTOS (vTaskDelay)
